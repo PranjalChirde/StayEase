@@ -1,4 +1,4 @@
-# Wanderlust (Airbnb Clone)
+# Wanderlust 
 
 A full-stack web application that allows users to create, view, edit, and delete travel listings, inspired by Airbnb. 
 
