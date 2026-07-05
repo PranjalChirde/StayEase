@@ -347,6 +347,30 @@ const sampleListings = [
     location: "Costa Rica",
     country: "Costa Rica",
   },
+  {
+  title: "Mountain View Cabin Retreat",
+  description:
+    "Experience peace and nature in this beautiful mountain cabin. Perfect for hiking lovers with breathtaking sunrise views.",
+  image: {
+    filename: "listingimage",
+    url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
+  },
+  price: 1200,
+  location: "Aspen",
+  country: "United States",
+},
+{
+  title: "Luxury City Apartment",
+  description:
+    "Stay in the heart of the city in this modern luxury apartment. Close to shopping centers, restaurants, and nightlife.",
+  image: {
+    filename: "listingimage",
+    url: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=60",
+  },
+  price: 2000,
+  location: "New York",
+  country: "United States",
+}
 ];
 
 module.exports = { data: sampleListings };

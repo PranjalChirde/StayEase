@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError.js');
+const { isLoggedIn, isOwner, validateListing ,saveRedirectUrl, validateReview} = require("./middlewares/middleware.js");
 
 // cookies required
 const session = require("express-session");
@@ -97,12 +98,6 @@ app.use("/", userRouter);
 // All Routes
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError(404, "Page Not Found"));
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    let {statusCode = 500, message = "SomeThing Went Wrong"} = err;
-    res.status(statusCode).render("error.ejs", {message});
 });
 
 
