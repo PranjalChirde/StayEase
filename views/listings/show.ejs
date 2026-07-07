@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<% if (curUser && listing.owner._id.equals(curUser._id)) { %>
+<% if (curUser && listing.owner && listing.owner._id.equals(curUser._id)) { %>
   <div class="btns mb-3">
 
     <a href="/listings/<%= listing.id %>/edit" class="btn btn-dark offset-3 edit-btn">Edit</a>
@@ -128,7 +128,7 @@
         <% for (review of listing.reviews ){ %>
             <div class="card col-5 ms-3 mb-3">
                 <div class="card-body">
-                    <h5 class="card-title"><%= review.author.username %></h5>
+                    <h5 class="card-title"><%= review.author ? review.author.username : "Anonymous" %></h5>
                     <p class="card-text"><%= review.comment %></p>
                     <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
                 </div>
