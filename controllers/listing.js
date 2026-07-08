@@ -1,5 +1,30 @@
 const Listing = require("../models/listing.js");
-const ExpressError = require('../utils/ExpressError.js')
+const ExpressError = require('../utils/ExpressError.js');
+const https = require('https');
+
+// Geocode location using free OpenStreetMap Nominatim API
+const geocode = (location, country) => {
+    return new Promise((resolve) => {
+        const query = encodeURIComponent(`${location}, ${country}`);
+        const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
+        https.get(url, { headers: { 'User-Agent': 'WanderlustApp/1.0' } }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    const results = JSON.parse(data);
+                    if (results.length > 0) {
+                        resolve({ lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) });
+                    } else {
+                        resolve(null);
+                    }
+                } catch (e) {
+                    resolve(null);
+                }
+            });
+        }).on('error', () => resolve(null));
+    });
+};
 
 
 module.exports.index = async (req, res) => {
@@ -19,6 +44,11 @@ module.exports.createListing = async (req, res) => {
                 url: req.file.path,
                 filename: req.file.filename
             };
+        }
+        // Geocode the location to get coordinates
+        const coords = await geocode(req.body.listing.location, req.body.listing.country);
+        if (coords) {
+            newListing.coordinates = coords;
         }
         await newListing.save();
         req.flash("success", "New Listing Created");
@@ -51,20 +81,25 @@ module.exports.RenderEditForm = async (req, res) => {
             throw new ExpressError(404, "Listing Not Found");
         }
         let originalImageURL = listing.image.url;
-        originalImageURL.replace("/upload", "/upload/w_250")
+        originalImageURL = originalImageURL.replace("/upload", "/upload/w_250");
         res.render("listings/edit.ejs", {listing, originalImageURL});
     };
 
 module.exports.updateListing = async (req, res) => {
         let {id} = req.params;
         let listing = await Listing.findByIdAndUpdate(id, {...req.body.listing}, { runValidators: true, new: true });
-        if (typeof req.file !== "undefined") {
+        if (req.file) {
             listing.image = {
                 url: req.file.path,
                 filename: req.file.filename
-            }
-            await listing.save();
+            };
         }
+        // Re-geocode if location or country changed
+        const coords = await geocode(req.body.listing.location, req.body.listing.country);
+        if (coords) {
+            listing.coordinates = coords;
+        }
+        await listing.save();
         req.flash("success", "Listing Updated Successfully");
         res.redirect(`/listings/${id}`);
     };

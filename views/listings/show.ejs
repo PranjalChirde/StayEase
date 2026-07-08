@@ -120,11 +120,12 @@
 
   <% } %>
 
-    <hr>
 
-    <p><b>All Reviews</b></p>
+    <% if (listing.reviews.length > 0 ) { %>
+          <hr>
 
     <div class="row">
+        <p><b>All Reviews</b></p>
         <% for (review of listing.reviews ){ %>
             <div class="card col-5 ms-3 mb-3">
                 <div class="card-body">
@@ -132,15 +133,31 @@
                     <p class="card-text"><%= review.comment %></p>
                     <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
                 </div>
-                <form class="mb-3" method="post" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"> 
+                <% if(curUser && review.author && review.author._id.equals(curUser._id)) { %>
+                <form class="mb-3" method="post" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
                     <button class="btn btn-sm btn-dark">Delete</button>
                 </form>
+                <% } %>
             </div>
         <% } %>
     </div>
 
- 
-
-
+<% } %>
 
 </div>
+
+<% if (listing.coordinates && listing.coordinates.lat && listing.coordinates.lng) { %>
+
+  <div id="map" style="height:350px; width:100%; border-radius:10px; margin-top:16px; margin-bottom:16px;"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    const listing = <%- JSON.stringify(listing) %>;
+</script>
+
+<script src="/js/map.js"></script>
+
+<% } else { %>
+<p class="text-muted mt-2"><i class="fa-solid fa-location-dot"></i> Map not available for this listing.</p>
+<% } %>
