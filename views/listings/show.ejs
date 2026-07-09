@@ -153,7 +153,7 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    const listing = <%- JSON.stringify(listing) %>;
+    window.mapData = <%- JSON.stringify(listing).replace(/</g, '\\u003c') %>;
 </script>
 
 <script src="/js/map.js"></script>

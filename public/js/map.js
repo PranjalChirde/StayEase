@@ -1,24 +1,31 @@
-const lat = listing.coordinates.lat;
-const lng = listing.coordinates.lng;
+(() => {
+    // Read the data attached to the window object
+    const listing = window.mapData;
+    
+    if (!listing || !listing.coordinates) return;
 
-// Initialize map
-const map = L.map('map').setView([lat, lng], 13);
+    const lat = listing.coordinates.lat;
+    const lng = listing.coordinates.lng;
 
-// OpenStreetMap tiles
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+    // Initialize map
+    const map = L.map('map').setView([lat, lng], 13);
 
-// Marker
-const marker = L.marker([lat, lng]).addTo(map);
+    // OpenStreetMap tiles
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-// Format price
-let priceStr = listing.price ? listing.price.toLocaleString('en-IN') : 'N/A';
+    // Marker
+    const marker = L.marker([lat, lng]).addTo(map);
 
-// Popup
-marker.bindPopup(`
-    <b>${listing.title}</b><br>
-    ${listing.location}, ${listing.country}<br>
-    &#8377;${priceStr} /night
-`).openPopup();
+    // Format price
+    let priceStr = listing.price ? listing.price.toLocaleString('en-IN') : 'N/A';
+
+    // Popup
+    marker.bindPopup(`
+        <b>${listing.title}</b><br>
+        ${listing.location}, ${listing.country}<br>
+        &#8377;${priceStr} /night
+    `).openPopup();
+})();

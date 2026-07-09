@@ -79,12 +79,6 @@ main()
     });
 
 
-app.get("/", (req, res) => {
-    res.send("connected successfully");
-});
-
-
-
 // Listings Routes
 app.use('/listings', listingRouter);
 
