@@ -12,6 +12,7 @@ const { isLoggedIn, isOwner, validateListing ,saveRedirectUrl, validateReview} =
 
 // cookies required
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 
 const passport = require('passport')
@@ -63,12 +64,23 @@ app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, "/public")));
 
+const store =  MongoStore.create({
+    mongoUrl :DB_URL,
+    crypto : {
+        secret : "mysupersecretcode"
+    },
+    touchAfter : 24 * 3600,
+});
+
+store.on("error", () => {
+    console.log("Error in Session mongo store", err);
+});
 
 // access mongoDB
-const MONGO_URL = 'mongodb://127.0.0.1:27017/wanderlust'; 
+const DB_URL =  process.env.MONGODB_ATLAS_URL;
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(DB_URL);
 };
 
 main()
