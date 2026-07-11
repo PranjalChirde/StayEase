@@ -31,7 +31,7 @@ const DB_URL = process.env.NODE_ENV === 'production'
 const store = new MongoStore({
     mongoUrl: DB_URL,
     crypto: {
-        secret: process.env.SECRET || 'mysupersecretcode'
+        secret: process.env.SECRET || 'fallbacksecret'
     },
     touchAfter: 24 * 3600,
 });
@@ -43,7 +43,7 @@ store.on("error", (err) => {
 // cookies sessions options
 const sessionOptions = {
     store,
-    secret: process.env.SECRET || 'mysupersecretcode',
+    secret: process.env.SECRET || 'fallbacksecret',
     resave: false,
     saveUninitialized: false,
     cookie: {
