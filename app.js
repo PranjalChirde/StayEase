@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError.js');
-const { isLoggedIn, isOwner, validateListing, saveRedirectUrl, validateReview } = require("./middlewares/middleware.js");
 
 // cookies required
 const session = require("express-session");
@@ -28,7 +27,7 @@ const DB_URL = process.env.NODE_ENV === 'production'
     ? process.env.MONGODB_ATLAS_URL
     : 'mongodb://127.0.0.1:27017/wanderlust';
 
-const store = new MongoStore({
+const store = MongoStore.create({
     mongoUrl: DB_URL,
     crypto: {
         secret: process.env.SECRET || 'fallbacksecret'
@@ -47,9 +46,9 @@ const sessionOptions = {
     resave: false,
     saveUninitialized: false,
     cookie: {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
     }
 };
 
@@ -93,6 +92,11 @@ main()
         console.log(err);
     });
 
+// Root route redirect
+app.get('/', (req, res) => {
+    res.redirect('/listings');
+});
+
 // Listings Routes
 app.use('/listings', listingRouter);
 
@@ -113,6 +117,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("error.ejs", { message });
 });
 
-app.listen(8080, () => {
-    console.log(`server is running on http://localhost:8080/`);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
